@@ -6,11 +6,12 @@ from PyQt5.QtWidgets import (QApplication, QWidget,QPushButton,QMessageBox,QDesk
                              QLineEdit,QGroupBox,QSplitter,QFileDialog, QScrollArea, QListWidget)
 try:
     from .base import Plugin_Base
+    from .protocol import Plugin as ProtocolPlugin
     from Combobox import ComboBox
     from i18n import _
     import utils, parameters
     from conn.base import ConnectionStatus
-    from widgets import statusBar
+    from widgets import statusBar, PlainTextEdit
     from plugins.graph_widgets import graphWidgets
 except ImportError:
     from COMTool import utils, parameters
@@ -22,7 +23,7 @@ except ImportError:
     from COMTool.plugins.base import Plugin_Base
 
 
-class Plugin(Plugin_Base):
+class Plugin(ProtocolPlugin):
     '''
         call sequence:
             set vars like hintSignal, hintSignal
@@ -144,7 +145,7 @@ send_bytes(buff, len);
             @config dict type, just change this var's content,
                                when program exit, this config will be auto save to config file
         '''
-        self.config = config
+        super().onInit(config)
         default = {
             "version": 1,
             "graphWidgets": [
@@ -193,13 +194,43 @@ send_bytes(buff, len);
         '''
             setting widget, just return a QWidget object or None
         '''
+        layout = QVBoxLayout()
+        setingGroup = QGroupBox(_("Rx Stripts"))
+        setingGrouplayout = QGridLayout()
+        setingGrouplayout.setContentsMargins(10, 18, 10, 18)
+        setingGrouplayout.setVerticalSpacing(10)
+        setingGroup.setLayout(setingGrouplayout)
+        self.codeItems = ComboBox()
+        self.codeItemCustomStr = _("Custom, input name")
+        self.codeItemLoadDefaultsStr = _("Load defaults")
+        self.codeItems.setEditable(True)
+        self.codeWidget = PlainTextEdit()
+        self.saveCodeBtn = QPushButton(_("Save"))
+        self.saveCodeBtn.setEnabled(False)
+        self.deleteCodeBtn = QPushButton(_("Delete"))
+        btnLayout = QHBoxLayout()
+        btnLayout.addWidget(self.saveCodeBtn)
+        btnLayout.addWidget(self.deleteCodeBtn)
+        setingGrouplayout.addWidget(self.codeItems,0,0,1,1)
+        setingGrouplayout.addWidget(self.codeWidget,1,0,1,1)
+        setingGrouplayout.addLayout(btnLayout,2,0,1,1)
         itemList = QListWidget()
         for k,v in graphWidgets.items():
             itemList.addItem(k)
         itemList.setToolTip(_("Double click to add a graph widget"))
         itemList.setCurrentRow(0)
         itemList.itemDoubleClicked.connect(self.addWidgetToMain)
-        return itemList
+        layout.addWidget(setingGroup)
+        layout.addWidget(itemList)
+        widget = QWidget()
+        widget.setLayout(layout)
+        layout.setContentsMargins(0,8,0,8)
+
+        self.saveCodeBtn.clicked.connect(self.saveCode)
+        self.deleteCodeBtn.clicked.connect(self.deleteCode)
+        self.codeWidget.onSave = self.saveCode
+
+        return widget
 
     def addWidgetToMain(self, item):
         for k, c in graphWidgets.items():
@@ -242,6 +273,13 @@ send_bytes(buff, len);
             call in receive thread, not UI thread
         '''
         self.statusBar.addRx(len(data))
+        try:
+            data = self.decodeMethod(data)
+        except Exception as e:
+            self.hintSignal.emit("error", _("Error"), _("Run decode error") + " " + str(e))
+            return
+        if not data:
+            return
         for w in self.widgets:
             w.onData(data)
 
@@ -271,7 +309,20 @@ send_bytes(buff, len);
             UI init done, you can update your widget here
             this method runs in UI thread, do not block too long
         '''
-        pass
+        # init decoder and encoder
+        for k in self.config["code"]:
+            self.codeItems.addItem(k)
+        self.codeItems.addItem(self.codeItemCustomStr)
+        self.codeItems.addItem(self.codeItemLoadDefaultsStr)
+        name = self.config["currCode"]
+        idx = self.codeItems.findText(self.config["currCode"])
+        if idx < 0:
+            idx = 0
+            name = "default"
+        self.codeItems.setCurrentIndex(idx)
+        self.selectCode(name)
+        self.codeItems.currentIndexChanged.connect(self.onCodeItemChanged) # add here to avoid self.selectCode trigger
+        self.codeWidget.textChanged.connect(self.onCodeChanged)
 
     def onActive(self):
         '''

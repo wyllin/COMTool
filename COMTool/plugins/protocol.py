@@ -84,27 +84,7 @@ class Plugin(Plugin_Base):
                     "text": "hello",
                     "remark": "hello",
                     "icon": "fa5.hand-paper"
-                },{
-                    "text": "\\x01\\x03\\x03\\x03\\x03\\x01",
-                    "remark": "pre",
-                    "icon": "ei.arrow-left",
-                    "shortcut": [[16777234, "Left"]]
-                },{
-                    "text": "\\x01\\x04\\x04\\x04\\x04\\x01",
-                    "remark": "next",
-                    "icon": "ei.arrow-right",
-                    "shortcut": [[16777236, "Right"]]
-                },{
-                    "text": "\\x01\\x01\\x01\\x01\\x01\\x01",
-                    "remark": "ok",
-                    "icon": "fa.circle-o",
-                    "shortcut": [[16777220, "Return"]]
-                },{
-                    "text": "\\x01\\x02\\x02\\x02\\x02\\x01",
-                    "remark": "ret",
-                    "icon": "ei.return-key",
-                    "shortcut": [[16777216, "Esc"]]
-                }
+                },
             ]
         }
         self.config = config
@@ -146,9 +126,14 @@ class Plugin(Plugin_Base):
     def onWidgetMain(self, parent):
         self.mainWidget = QSplitter(Qt.Vertical)
         self.receiveWidget = TextEdit()
-        font = QFont('Menlo,Consolas,Bitstream Vera Sans Mono,Courier New,monospace, Microsoft YaHei', 10)
+        font = QFont('Microsoft YaHei', 10)
         self.receiveWidget.setFont(font)
         self.receiveWidget.setLineWrapMode(TextEdit.NoWrap)
+        receiveAreaWidget = QWidget()
+        receiveAreaLayout = QVBoxLayout()
+        receiveAreaLayout.setContentsMargins(8, 15, 8, 0)
+        receiveAreaWidget.setLayout(receiveAreaLayout)
+        receiveAreaLayout.addWidget(self.receiveWidget)
         self.clearBtn = QPushButton("")
         self.keyBtneventFilter = self.ModeButtonEventFilter(self.onModeBtnKeyPressEvent, self.onModeBtnKeyReleaseEvent)
         self.keyModeBtn = self.ModeButton(_("Key mode"), self.keyBtneventFilter)
@@ -171,7 +156,7 @@ class Plugin(Plugin_Base):
         cutomSendItemsWraper0 = QWidget()
         cutomSendItemsWraper0.setProperty("class", "scrollbar2")
         layout0 = QVBoxLayout()
-        layout0.setContentsMargins(0,8,0,0)
+        layout0.setContentsMargins(8,8,8,8)
         cutomSendItemsWraper0.setLayout(layout0)
         layout0.addWidget(self.customSendScroll)
         customSendItemsLayoutWrapper = QVBoxLayout()
@@ -187,12 +172,12 @@ class Plugin(Plugin_Base):
         customSendItemsLayoutWrapper.addWidget(self.addButton)
         customSendItemsLayoutWrapper.addStretch(0)
 
-        self.mainWidget.addWidget(self.receiveWidget)
+        self.mainWidget.addWidget(receiveAreaWidget)
         self.mainWidget.addWidget(clearModeWidget)
         self.mainWidget.addWidget(cutomSendItemsWraper0)
-        self.mainWidget.setStretchFactor(0, 2)
+        self.mainWidget.setStretchFactor(0, 5)
         self.mainWidget.setStretchFactor(1, 1)
-        self.mainWidget.setStretchFactor(2, 11)
+        self.mainWidget.setStretchFactor(2, 4)
         # event
         self.addButton.clicked.connect(lambda : self.insertSendItem())
         def clearReceived():
@@ -239,6 +224,8 @@ class Plugin(Plugin_Base):
         root.setLayout(rootLayout)
         setingGroup = QGroupBox(_("En-decoding settings"))
         layout = QGridLayout()
+        layout.setContentsMargins(10, 18, 10, 18)
+        layout.setVerticalSpacing(10)
         setingGroup.setLayout(layout)
         self.codeItems = ComboBox()
         self.codeItemCustomStr = _("Custom, input name")
@@ -251,12 +238,12 @@ class Plugin(Plugin_Base):
         btnLayout = QHBoxLayout()
         btnLayout.addWidget(self.saveCodeBtn)
         btnLayout.addWidget(self.deleteCodeBtn)
-        layout.addWidget(QLabel(_("Defaults")),0,0,1,1)
-        layout.addWidget(self.codeItems,0,1,1,1)
-        layout.addWidget(QLabel(_("Code")),1,0,1,1)
-        layout.addWidget(self.codeWidget,1,1,1,1)
-        layout.addLayout(btnLayout,2,1,1,1)
+        layout.addWidget(self.codeItems,0,0,1,1)
+        layout.addWidget(self.codeWidget,1,0,1,1)
+        layout.addLayout(btnLayout,2,0,1,1)
         serialSendSettingsLayout = QGridLayout()
+        serialSendSettingsLayout.setContentsMargins(10, 18, 10, 18)
+        serialSendSettingsLayout.setVerticalSpacing(15)
         sendGroup = QGroupBox(_("Send settings"))
         sendGroup.setLayout(serialSendSettingsLayout)
         self.sendSettingsAscii = QRadioButton(_("ASCII"))

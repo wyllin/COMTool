@@ -15,8 +15,8 @@ MainWindow {
     min-width:100px;
 }
 QWidget {
-    background-color:#f5f5f5;
-    color:#6b6b6b;
+    background-color: #f5f5f5;
+    color: #000000;
     font-family: "Microsoft YaHei",Tahoma,Optima,"Trebuchet MS";
 }
 QMessageBox {
@@ -400,6 +400,9 @@ QScrollBar:horizontal {
 QScrollBar::handle {
     background: #cfcfcf;
     border-radius: 5px;
+}
+QScrollBar::handle:vertical {
+    min-height: 20px;
 }
 QScrollBar::add-line {
     border: none;

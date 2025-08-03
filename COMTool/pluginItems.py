@@ -97,6 +97,7 @@ class PluginItem:
         # widgets settings
         self.settingWidget = QWidget()
         self.settingWidget.setProperty("class","settingWidget")
+        self.settingWidget.setFixedWidth(300)
         settingLayout = QVBoxLayout()
         self.settingWidget.setLayout(settingLayout)
         #    get connection settings widgets
@@ -107,8 +108,13 @@ class PluginItem:
             self.connSelectCommbox = ComboBox()
             for conn in self.conns:
                 self.connSelectCommbox.addItem(conn.name)
-            layout.addWidget(self.connSelectCommbox)
-            layout.setContentsMargins(1, 6, 0, 0)
+            connSelectCommboxWidget = QWidget()
+            connSelectCommboxLayout = QVBoxLayout()
+            connSelectCommboxLayout.setContentsMargins(8, 15, 8, 0)
+            connSelectCommboxWidget.setLayout(connSelectCommboxLayout)
+            connSelectCommboxLayout.addWidget(self.connSelectCommbox)
+            layout.addWidget(connSelectCommboxWidget)
+            layout.setContentsMargins(0, 15, 0, 0)
             self.connsParent = QWidget()
             layout2 = QVBoxLayout()
             layout2.setContentsMargins(0, 0, 0, 0)
@@ -140,9 +146,9 @@ class PluginItem:
         widget.addWidget(self.settingWidget)
         widget.addWidget(self.mainWidget)
         widget.addWidget(self.functionalWidget)
-        widget.setStretchFactor(0, 1)
-        widget.setStretchFactor(1, 2)
-        widget.setStretchFactor(2, 1)
+        widget.setStretchFactor(0, 0)
+        widget.setStretchFactor(1, 1)
+        widget.setStretchFactor(2, 0)
         self.functionalWidget.hide()
         # UI init done
         self.plugin.onUiInitDone()

@@ -493,11 +493,12 @@ msgid "Show recived data as hex format"
 msgstr "使用十六进制表示方法显示收到的数据"
 
 #: plugins/dbg.py:158
-msgid ""
-"Auto\n"
-"Linefeed\n"
-"ms"
+msgid "Auto Linefeed"
 msgstr "自动换行"
+
+#: plugins/dbg.py:158
+msgid "Rx Stript"
+msgstr "接收脚本"
 
 #: plugins/dbg.py:159 plugins/dbg.py:162
 msgid "Auto linefeed after interval, unit: ms"
@@ -554,10 +555,12 @@ msgid "Get send data as hex format, e.g. hex '31 32 33' equal to ascii '123'"
 msgstr "以十六进制的格式获取将要发送的数据，比如 十六进制的'31 32 33' 和 ascii编码的 '123' 等效"
 
 #: plugins/dbg.py:193
-msgid ""
-"Timed Send\n"
-"ms"
+msgid "Timed Send"
 msgstr "定时发送"
+
+#: plugins/dbg.py:158
+msgid "Tx Stript"
+msgstr "发送脚本"
 
 #: plugins/dbg.py:194 plugins/dbg.py:197
 msgid "Timed send, unit: ms"
@@ -716,6 +719,10 @@ msgstr "checksum(和校验)是可选项，和校验是除了\",checksum\"外的�
 #: plugins/graph.py:74
 msgid "[x] is optional"
 msgstr ""
+
+#: plugins/graph.py:198
+msgid "Rx Stripts"
+msgstr "接收解码"
 
 #: plugins/graph.py:75
 msgid "e.g."
@@ -887,7 +894,7 @@ msgstr "按键模式"
 
 #: plugins/protocol.py:240
 msgid "En-decoding settings"
-msgstr "发送设置"
+msgstr "编解码"
 
 #: plugins/protocol.py:244
 msgid "Custom, input name"

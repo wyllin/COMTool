@@ -15,7 +15,7 @@ QMessageBox {
     background-color:#212121;
 }
 QWidget {
-    color:#bcbcbd;
+    color: #ffffff;
     font-family: "Microsoft YaHei",Tahoma,Optima,"Trebuchet MS";
 }
 .TitleBar {
@@ -62,7 +62,8 @@ QWidget {
 }
 .TitleBar .max{
     background-color: transparent;
-    color: white;}
+    color: white;
+}
 .TitleBar .close{
     background-color: transparent;
     color: white;
@@ -370,6 +371,9 @@ QScrollBar:horizontal {
 QScrollBar::handle {
     background: #212121;
     border-radius: 5px;
+}
+QScrollBar::handle:vertical {
+    min-height: 20px;
 }
 QScrollBar::add-line {
     border: none;
